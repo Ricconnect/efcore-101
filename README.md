@@ -66,7 +66,7 @@ MedicineManager/
 
 The app is intentionally wired to `JsonFileRepository<T>`. Your tasks:
 
-1. Add the EF Core NuGet packages (`Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Tools`)
+1. Add the EF Core NuGet packages (`Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Tools`, `Microsoft.EntityFrameworkCore.Design`)
 2. Create a `DbContext` with `DbSet<Medicine>` and `DbSet<IntakeSchedule>`
 3. Configure the `MedicineId` FK as a navigation property on `IntakeSchedule`
 4. Implement `IRepository<T>` using the `DbContext`
