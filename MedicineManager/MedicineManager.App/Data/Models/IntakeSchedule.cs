@@ -12,6 +12,7 @@ public class IntakeSchedule : IEntity
     // Foreign key to Medicine — intentionally left without a navigation property
     // to motivate the introduction of EF Core relationships later.
     public Guid MedicineId { get; set; }
+    public Medicine Medicine { get; set; }
 
     public TimeOnly Time { get; set; } = new TimeOnly(8, 0);
     public int FrequencyPerDay { get; set; } = 1;

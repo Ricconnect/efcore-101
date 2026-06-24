@@ -1,6 +1,7 @@
 using MedicineManager.App.Components;
 using MedicineManager.App.Data.Models;
 using MedicineManager.App.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,9 @@ builder.Services.AddRazorComponents()
 
 // Register repositories.
 // TODO: Replace JsonFileRepository with an EF Core implementation when introducing Entity Framework Core.
-builder.Services.AddScoped<IRepository<Medicine>, JsonFileRepository<Medicine>>();
-builder.Services.AddScoped<IRepository<IntakeSchedule>, JsonFileRepository<IntakeSchedule>>();
+builder.Services.AddDbContext<MedicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IRepository<Medicine>, EfCoreRepository<Medicine>>();
+builder.Services.AddScoped<IRepository<IntakeSchedule>, EfCoreRepository<IntakeSchedule>>();
 
 var app = builder.Build();
 
