@@ -1,0 +1,76 @@
+@page "/medicines/edit/{Id:guid}"
+@rendermode InteractiveServer
+@inject IRepository<Medicine> MedicineRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Medicine</PageTitle>
+
+<h1>Edit Medicine</h1>
+
+@if (medicine is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="medicine" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <InputText class="form-control" @bind-Value="medicine.Name" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <InputTextArea class="form-control" rows="3" @bind-Value="medicine.Description" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Dosage</label>
+                    <InputNumber class="form-control" @bind-Value="medicine.Dosage" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Dosage Unit (e.g. mg, ml)</label>
+                    <InputText class="form-control" @bind-Value="medicine.DosageUnit" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="/medicines" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </EditForm>
+
+            <hr />
+
+            <button class="btn btn-danger" @onclick="DeleteAsync">Delete Medicine</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private Medicine? medicine;
+
+    protected override async Task OnInitializedAsync()
+    {
+        medicine = await MedicineRepository.GetByIdAsync(Id);
+    }
+
+    private async Task SaveAsync()
+    {
+        if (medicine is not null)
+        {
+            await MedicineRepository.UpdateAsync(medicine);
+            Navigation.NavigateTo("/medicines");
+        }
+    }
+
+    private async Task DeleteAsync()
+    {
+        await MedicineRepository.DeleteAsync(Id);
+        Navigation.NavigateTo("/medicines");
+    }
+}

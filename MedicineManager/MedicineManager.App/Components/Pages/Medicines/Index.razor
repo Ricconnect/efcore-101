@@ -1,0 +1,53 @@
+@page "/medicines"
+@rendermode InteractiveServer
+@inject IRepository<Medicine> MedicineRepository
+
+<PageTitle>Medicines</PageTitle>
+
+<h1>Medicines</h1>
+
+<a href="/medicines/create" class="btn btn-primary mb-3">Add Medicine</a>
+
+@if (medicines is null)
+{
+    <p>Loading...</p>
+}
+else if (!medicines.Any())
+{
+    <p class="text-muted">No medicines found. Add one to get started.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Dosage</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var medicine in medicines)
+            {
+                <tr>
+                    <td>@medicine.Name</td>
+                    <td>@medicine.Dosage @medicine.DosageUnit</td>
+                    <td>@medicine.Description</td>
+                    <td>
+                        <a href="/medicines/edit/@medicine.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<Medicine>? medicines;
+
+    protected override async Task OnInitializedAsync()
+    {
+        medicines = await MedicineRepository.GetAllAsync();
+    }
+}

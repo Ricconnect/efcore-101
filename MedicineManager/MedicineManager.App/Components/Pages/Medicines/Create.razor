@@ -1,0 +1,49 @@
+@page "/medicines/create"
+@rendermode InteractiveServer
+@inject IRepository<Medicine> MedicineRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Add Medicine</PageTitle>
+
+<h1>Add Medicine</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="medicine" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <InputText class="form-control" @bind-Value="medicine.Name" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <InputTextArea class="form-control" rows="3" @bind-Value="medicine.Description" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Dosage</label>
+                <InputNumber class="form-control" @bind-Value="medicine.Dosage" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Dosage Unit (e.g. mg, ml)</label>
+                <InputText class="form-control" @bind-Value="medicine.DosageUnit" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="/medicines" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Medicine medicine = new();
+
+    private async Task SaveAsync()
+    {
+        await MedicineRepository.AddAsync(medicine);
+        Navigation.NavigateTo("/medicines");
+    }
+}

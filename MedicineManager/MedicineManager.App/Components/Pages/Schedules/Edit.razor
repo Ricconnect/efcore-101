@@ -1,0 +1,92 @@
+@page "/schedules/edit/{Id:guid}"
+@rendermode InteractiveServer
+@inject IRepository<IntakeSchedule> ScheduleRepository
+@inject IRepository<Medicine> MedicineRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Intake Schedule</PageTitle>
+
+<h1>Edit Intake Schedule</h1>
+
+@if (schedule is null || medicines is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="schedule" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label class="form-label">Medicine</label>
+                    <InputSelect class="form-select" @bind-Value="schedule.MedicineId">
+                        <option value="@Guid.Empty">-- Select a medicine --</option>
+                        @foreach (var medicine in medicines)
+                        {
+                            <option value="@medicine.Id">@medicine.Name (@medicine.Dosage @medicine.DosageUnit)</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Time</label>
+                    <input type="time" class="form-control" value="@schedule.Time.ToString("HH:mm")"
+                        @onchange="OnTimeChanged" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Frequency per day</label>
+                    <InputNumber class="form-control" @bind-Value="schedule.FrequencyPerDay" min="1" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Notes</label>
+                    <InputTextArea class="form-control" rows="2" @bind-Value="schedule.Notes" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="/schedules" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </EditForm>
+
+            <hr />
+
+            <button class="btn btn-danger" @onclick="DeleteAsync">Delete Schedule</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private IntakeSchedule? schedule;
+    private IEnumerable<Medicine>? medicines;
+
+    protected override async Task OnInitializedAsync()
+    {
+        schedule = await ScheduleRepository.GetByIdAsync(Id);
+        medicines = await MedicineRepository.GetAllAsync();
+    }
+
+    private async Task SaveAsync()
+    {
+        if (schedule is not null)
+        {
+            await ScheduleRepository.UpdateAsync(schedule);
+            Navigation.NavigateTo("/schedules");
+        }
+    }
+
+    private async Task DeleteAsync()
+    {
+        await ScheduleRepository.DeleteAsync(Id);
+        Navigation.NavigateTo("/schedules");
+    }
+
+    private void OnTimeChanged(ChangeEventArgs e)
+    {
+        if (schedule is not null && TimeOnly.TryParse(e.Value?.ToString(), out var parsed))
+            schedule.Time = parsed;
+    }
+}

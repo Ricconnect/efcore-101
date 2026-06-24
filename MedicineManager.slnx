@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/MedicineManager/">
+    <Project Path="MedicineManager/MedicineManager.App/MedicineManager.App.csproj" />
+  </Folder>
+</Solution>

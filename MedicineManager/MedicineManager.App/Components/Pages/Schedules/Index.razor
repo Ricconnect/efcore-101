@@ -1,0 +1,63 @@
+@page "/schedules"
+@rendermode InteractiveServer
+@inject IRepository<IntakeSchedule> ScheduleRepository
+@inject IRepository<Medicine> MedicineRepository
+
+<PageTitle>Intake Schedules</PageTitle>
+
+<h1>Intake Schedules</h1>
+
+<a href="/schedules/create" class="btn btn-primary mb-3">Add Schedule</a>
+
+@if (schedules is null)
+{
+    <p>Loading...</p>
+}
+else if (!schedules.Any())
+{
+    <p class="text-muted">No schedules found. Add one to get started.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Medicine</th>
+                <th>Time</th>
+                <th>Frequency (per day)</th>
+                <th>Notes</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schedule in schedules)
+            {
+                <tr>
+                    <td>@GetMedicineName(schedule.MedicineId)</td>
+                    <td>@schedule.Time.ToString("HH:mm")</td>
+                    <td>@schedule.FrequencyPerDay</td>
+                    <td>@schedule.Notes</td>
+                    <td>
+                        <a href="/schedules/edit/@schedule.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<IntakeSchedule>? schedules;
+    private Dictionary<Guid, string> medicineNames = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        schedules = await ScheduleRepository.GetAllAsync();
+
+        var medicines = await MedicineRepository.GetAllAsync();
+        medicineNames = medicines.ToDictionary(m => m.Id, m => m.Name);
+    }
+
+    private string GetMedicineName(Guid medicineId) =>
+        medicineNames.TryGetValue(medicineId, out var name) ? name : "Unknown";
+}
