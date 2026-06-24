@@ -66,7 +66,7 @@ MedicineManager/
 
 The app is intentionally wired to `JsonFileRepository<T>`. Your tasks:
 
-1. Add the EF Core NuGet packages (`Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Tools`)
+1. Add the EF Core NuGet packages (`Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Tools`, `Microsoft.EntityFrameworkCore.Design`)
 2. Create a `DbContext` with `DbSet<Medicine>` and `DbSet<IntakeSchedule>`
 3. Configure the `MedicineId` FK as a navigation property on `IntakeSchedule`
 4. Implement `IRepository<T>` using the `DbContext`
@@ -85,8 +85,13 @@ dotnet ef database update
 ```
 3. Run the project by F5 or running `dotnet run` 
 
+Docs: 
+- Ef core https://learn.microsoft.com/en-us/ef/core/
+- DbContext https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration
+
 ### Make your first change 
-1. Update the model by adding a separate table, GPKs, with:   - An Id (Guid)
+1. Update the model by adding a separate table, GPKs, with:
+   - An Id (Guid)
    - An integer Code
    - An index on the Code property
 2. Link it to the medicine and make it required 
